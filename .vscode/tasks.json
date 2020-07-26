@@ -21,7 +21,7 @@
     {
       "label": "add:git:push",
       "type": "shell",
-      "command": "source ~/.zshrc && roc",
+      "command": "git add . && git commit -m '🚀' && git push",
       "presentation": {
         "clear": true
       }
