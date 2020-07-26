@@ -6,6 +6,8 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
   MUTATE_FILE_PATH,
   INIT_CWD,
 }) => {
+  console.log(`logger`, logger)
+
   const nil = only(
     {
       MUTATE_API_URL,
