@@ -66,21 +66,25 @@ test.each([
     },
   },
 ])('Mutates with %o', async overrides => {
-  const options = {
+  const options = mergeDeep(overrides.options, {
     exists: true,
     response: {
       ok: true,
-      json: {},
+      json: {
+        info: 'info',
+        url: 'url',
+      },
     },
-    ...overrides.options,
-  }
+  })
+
+  const { json, ok } = options.response
 
   const { payload, inject } = await create({
     payload: overrides.payload,
     inject: {
       fetch: jest.fn(async () => ({
-        ok: options.response.ok,
-        text: async () => JSON.stringify(options.response.json),
+        ok,
+        text: async () => JSON.stringify(json),
       })),
       fs: {
         existsSync: jest.fn(() => options.exists),
@@ -138,6 +142,6 @@ test.each([
       body: formData,
     })
 
-    expect(logger.info).toHaveBeenCalledWith('RESPONSE:', options.response.json)
+    expect(logger.info).toHaveBeenCalledWith('RESPONSE:', json.info, json.url)
   }
 })
