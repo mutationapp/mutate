@@ -4,13 +4,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  GITHUB_CONTEXT: ${{toJson(github)}}
-  HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
-  GITHUB_HEAD_REF: ${{github.head_ref}}
-  GITHUB_PULL_REQUEST_HEAD_SHA: ${{github.event.pull_request.head.sha}}
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
 jobs:
   test:
     name: Mutating...
