@@ -3,9 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [master]
-env:
-  GITHUB_CONTEXT: ${{toJson(github.event.pull_request.user.login)}}
-
 jobs:
   test:
     name: PR
@@ -17,8 +14,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
-      - name: DEBUG
-        run: echo "$GITHUB_CONTEXT"
       - name: DEBUG
         run: echo "$GITHUB_CONTEXT"
       - name: Install
