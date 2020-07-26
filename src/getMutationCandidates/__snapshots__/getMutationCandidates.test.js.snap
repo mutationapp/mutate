@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getMutationCandidates 1`] = `
+Object {
+  "files": Object {
+    "a.js": Array [
+      "a.test.js",
+      "a.snapshot.js",
+    ],
+    "b.js": Array [],
+    "c.ts": Array [
+      "c.test.ts",
+    ],
+    "d.png": Array [
+      "d.test.png",
+    ],
+  },
+  "result": Object {
+    "files": Array [
+      "a.js",
+      "a.test.js",
+      "a.snapshot.js",
+      "c.ts",
+      "c.test.ts",
+    ],
+    "mutate": Array [
+      "a.js",
+      "c.ts",
+    ],
+    "page": 1,
+    "pageCount": 1,
+    "search": undefined,
+    "size": 20,
+  },
+}
+`;

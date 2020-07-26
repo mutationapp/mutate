@@ -1,0 +1,50 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [master]
+
+# https://github.com/marketplace/actions/deploy-to-heroku
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    name: CD
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install
+        run: yarn install
+      - name: Lint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Deploy Api
+        uses: AkhileshNS/heroku-deploy@v3.0.4
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'staging-mutation-api'
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+      - name: Spec
+        env:
+          GITHUB_APP_NAME: mutationapp
+          MUTATE_API_URL: https://staging-mutation-api.herokuapp.com
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
+          STORAGE_URL: ${{secrets.STORAGE_URL}}
+          INTEGRATION_API_KEY: ${{secrets.INTEGRATION_API_KEY}}
+          MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
+        run: yarn spec
+      - name: Deploy Web
+        uses: AkhileshNS/heroku-deploy@v3.0.4
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: 'staging-mutation-web'
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
