@@ -22,8 +22,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
-      # - name: DEBUG
-      #   run: echo ${{github.sender.login}}
       - name: Install
         run: yarn install
       - name: Lint
@@ -34,24 +32,13 @@ jobs:
         run: yarn build
       - name: Review Api
         run: yarn review:api
-      - name: Spec
-        env:
-          GITHUB_APP_NAME: mutationapp
-          MUTATE_API_URL: ${{env.HEROKU_REVIEW_APP_URL}}
-          DATABASE_URL: ${{secrets.DATABASE_TEST_URL}}
-          STORAGE_URL: ${{secrets.STORAGE_TEST_URL}}
-          INTEGRATION_API_KEY: ${{secrets.INTEGRATION_API_KEY}}
-          MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
-        run: yarn spec
       - name: Stryker
         run: yarn stryker
-      - name: Mutate
-        env:
-          MUTATE_STRATEGY: 'all'
-          MUTATE_API_URL: ${{env.HEROKU_REVIEW_APP_URL}}
-          MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
-          MUTATE_PULL_NUMBER: ${{ github.event.pull_request.number }}
-          MUTATE_PULL_OWNER: ${{github.event.pull_request.base.user.login}}
-        run: echo "The PR number is $MUTATE_PULL_NUMBER and mutate url $MUTATE_API_URL" && yarn mutate
-      - name: Review Web
-        run: yarn review:web
+      # - name: Mutate
+      #   env:
+      #     MUTATE_STRATEGY: 'all'
+      #     MUTATE_API_URL: 'https://mutationapi.herokuapp.com'
+      #     MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
+      #     MUTATE_PULL_NUMBER: ${{ github.event.pull_request.number }}
+      #     MUTATE_PULL_OWNER: ${{github.event.pull_request.base.user.login}}
+      #   run: echo "The PR number is $MUTATE_PULL_NUMBER and mutate url $MUTATE_API_URL" && yarn mutate

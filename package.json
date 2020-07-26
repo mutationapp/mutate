@@ -6,6 +6,10 @@
   "repository": "git@github.com:mutationapp/mutate.git",
   "author": "ibrahim velinov <ibsukru@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "12.x",
+    "yarn": "1.x"
+  },
   "scripts": {
     "mutate": "node index.js",
     "lint": "eslint src/**/*.js",
