@@ -1,0 +1,41 @@
+{
+  "name": "mutate",
+  "version": "1.0.0",
+  "description": "Mutatation.app report uploader ",
+  "main": "index.js",
+  "repository": "git@github.com:mutationapp/mutate.git",
+  "author": "ibrahim velinov <ibsukru@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": "12.x",
+    "yarn": "1.x"
+  },
+  "scripts": {
+    "mutate": "node index.js",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest",
+    "stryker": "stryker run"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "form-data": "^3.0.0",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@stryker-mutator/core": "^3.3.1",
+    "@stryker-mutator/javascript-mutator": "^3.3.1",
+    "@stryker-mutator/jest-runner": "^3.3.1",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "prettier": "^2.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint && yarn test"
+    }
+  }
+}

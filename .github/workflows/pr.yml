@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Mutating...
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{matrix.node-version}}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Install
+        run: yarn install
+      - name: Lint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Stryker
+        run: yarn stryker
+      # - name: Mutate
+      #   env:
+      #     MUTATE_STRATEGY: 'all'
+      #     MUTATE_API_URL: 'https://mutationapi.herokuapp.com'
+      #     MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
+      #     MUTATE_PULL_NUMBER: ${{ github.event.pull_request.number }}
+      #     MUTATE_PULL_OWNER: ${{github.event.pull_request.base.user.login}}
+      #   run: echo "The PR number is $MUTATE_PULL_NUMBER and mutate url $MUTATE_API_URL" && yarn mutate
