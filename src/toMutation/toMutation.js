@@ -1,12 +1,9 @@
-const toMutation = ({ getAppFile, getTestFile, getSnapshotFile }) => (
-  // result = [],
-  fileName,
-) => {
+const toMutation = ({
+  getAppFile,
+  getTestFile,
+  getSnapshotFile,
+}) => fileName => {
   const appFile = getAppFile(fileName)
-
-  // if (!appFile || result.some(item => item && item.hasOwnProperty(appFile))) {
-  //   return result
-  // }
 
   const testFile = getTestFile(fileName)
   if (!testFile) {
