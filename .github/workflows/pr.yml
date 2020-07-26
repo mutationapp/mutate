@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    name: Mutating...
+    name: PR...
     runs-on: ubuntu-latest
 
     steps:
