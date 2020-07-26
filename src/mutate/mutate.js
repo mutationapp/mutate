@@ -62,7 +62,7 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
 
   if (!response.ok) {
     logger.error(response.status, result.error)
-    process.exit(1)
+    return
   }
 
   logger.info('RESPONSE:', result.info, result.url)
