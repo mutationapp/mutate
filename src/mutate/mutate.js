@@ -47,6 +47,8 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
     body: formData,
   })
 
+  console.log(`response`, response)
+
   logger.info('RESPONSE:', await response.json())
 }
 
