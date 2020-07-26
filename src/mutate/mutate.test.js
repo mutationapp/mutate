@@ -16,7 +16,7 @@ const create = async overrides => {
       inject: {
         only,
         fetch: jest.fn(async () => ({
-          json: async () => 'RESULT',
+          text: async () => 'text',
         })),
         path: {
           join: jest.fn(() => payload.MUTATE_FILE_PATH),
@@ -68,12 +68,20 @@ test.each([
 ])('Mutates with %o', async overrides => {
   const options = {
     exists: true,
+    response: {
+      ok: true,
+      json: {},
+    },
     ...overrides.options,
   }
 
   const { payload, inject } = await create({
     payload: overrides.payload,
     inject: {
+      fetch: jest.fn(async () => ({
+        ok: options.response.ok,
+        text: async () => JSON.stringify(options.response.json),
+      })),
       fs: {
         existsSync: jest.fn(() => options.exists),
       },
@@ -130,6 +138,6 @@ test.each([
       body: formData,
     })
 
-    expect(logger.info).toHaveBeenCalledWith('RESPONSE:', 'RESULT')
+    expect(logger.info).toHaveBeenCalledWith('RESPONSE:', options.response.json)
   }
 })

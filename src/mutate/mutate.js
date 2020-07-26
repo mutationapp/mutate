@@ -47,7 +47,25 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
     body: formData,
   })
 
-  logger.info('RESPONSE:', await response.json())
+  const result = await (async () => {
+    const text = await response.text()
+    if (!text) {
+      return
+    }
+
+    try {
+      return JSON.parse(text)
+    } catch (error) {
+      logger.warn('INVALID RESPONSE')
+    }
+  })()
+
+  if (!response.ok) {
+    logger.error(response.status, result.error)
+    return
+  }
+
+  logger.info('RESPONSE:', result.info, result.url)
 }
 
 module.exports = mutate
