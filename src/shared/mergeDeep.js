@@ -2,7 +2,7 @@ const mergeDeep = (target, source, overrideWhen) => {
   const isObject = obj => obj && typeof obj === 'object'
 
   if (!isObject(target) || !isObject(source)) {
-    return source
+    return target
   }
 
   Object.keys(source).forEach(key => {

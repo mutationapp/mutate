@@ -56,6 +56,23 @@ test.each([
     payload: {
       INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
     },
+    options: {
+      response: {
+        ok: false,
+        status: 401,
+        text: JSON.stringify({ error: 'Something went wrong' }),
+      },
+    },
+  },
+  {
+    payload: {
+      INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
+    },
+    options: {
+      response: {
+        text: 'invalid',
+      },
+    },
   },
   {
     payload: {
@@ -66,25 +83,31 @@ test.each([
     },
   },
 ])('Mutates with %o', async overrides => {
-  const options = mergeDeep(overrides.options, {
-    exists: true,
-    response: {
-      ok: true,
-      json: {
-        info: 'info',
-        url: 'url',
+  const options = mergeDeep(
+    {
+      exists: true,
+      response: {
+        status: 200,
+        error: undefined,
+        ok: true,
+        text: JSON.stringify({
+          info: 'info',
+          url: 'url',
+        }),
       },
     },
-  })
+    overrides.options,
+  )
 
-  const { json, ok } = options.response
+  const { ok, status, text } = options.response
 
   const { payload, inject } = await create({
     payload: overrides.payload,
     inject: {
       fetch: jest.fn(async () => ({
+        status,
         ok,
-        text: async () => JSON.stringify(json),
+        text: async () => text,
       })),
       fs: {
         existsSync: jest.fn(() => options.exists),
@@ -142,6 +165,26 @@ test.each([
       body: formData,
     })
 
-    expect(logger.info).toHaveBeenCalledWith('RESPONSE:', json.info, json.url)
+    const json = (() => {
+      try {
+        return JSON.parse(text)
+      } catch (error) {}
+    })()
+
+    if (!json) {
+      expect(logger.error).toHaveBeenCalledWith('RESPONSE IS INVALID:', {
+        result: json,
+      })
+
+      return
+    }
+
+    ok
+      ? expect(logger.info).toHaveBeenCalledWith(
+          'RESPONSE:',
+          json.info,
+          json.url,
+        )
+      : expect(logger.error).toHaveBeenCalledWith(status, json.error)
   }
 })

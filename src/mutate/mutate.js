@@ -55,10 +55,13 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
 
     try {
       return JSON.parse(text)
-    } catch (error) {
-      logger.warn('INVALID RESPONSE')
-    }
+    } catch (error) {}
   })()
+
+  if (!result) {
+    logger.error('RESPONSE IS INVALID:', { result })
+    return
+  }
 
   if (!response.ok) {
     logger.error(response.status, result.error)
