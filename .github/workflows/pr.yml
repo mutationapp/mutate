@@ -28,10 +28,6 @@ jobs:
         run: yarn lint
       - name: Test
         run: yarn test
-      - name: Build
-        run: yarn build
-      - name: Review Api
-        run: yarn review:api
       - name: Stryker
         run: yarn stryker
       # - name: Mutate
