@@ -12,6 +12,7 @@ const fs = require('fs')
 const fetch = require('node-fetch')
 const path = require('path')
 const FormData = require('form-data')
+const logger = console
 
 const {
   only,
@@ -61,7 +62,7 @@ const getMutationCandidates = injectGetMutationCandidates({
   withMatch,
   toPagedList,
   only,
-  logger: console,
+  logger,
   MATCH,
   STRATEGY,
   toMutation,
@@ -69,6 +70,7 @@ const getMutationCandidates = injectGetMutationCandidates({
 })
 
 const mutate = injectMutate({
+  logger,
   only,
   fs,
   fetch,

@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "test",
+      "group": "test",
+      "type": "shell",
+      "command": "yarn test",
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "label": "lint",
+      "type": "shell",
+      "command": "yarn lint:fix",
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "label": "add:git:push",
+      "type": "shell",
+      "command": "source ~/.zshrc && roc",
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "label": "stryker",
+      "type": "shell",
+      "command": "yarn stryker"
+    },
+    {
+      "label": "mutate",
+      "type": "shell",
+      "command": "yarn mutate",
+      "presentation": {
+        "clear": true
+      }
+    }
+  ]
+}
