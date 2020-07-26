@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [master]
 env:
-  GITHUB_CONTEXT: ${{toJson(github.event.pull_request)}}
+  GITHUB_CONTEXT: ${{toJson(github.event.pull_request.user.login)}}
 
 jobs:
   test:
@@ -35,5 +35,5 @@ jobs:
           MUTATE_API_URL: 'https://mutationapi.herokuapp.com'
           MUTATE_REPOSITORY_TOKEN: ${{secrets.MUTATE_REPOSITORY_TOKEN}}
           MUTATE_PULL_NUMBER: ${{ github.event.pull_request.number }}
-          MUTATE_PULL_OWNER: ${{github.event.pull_request.head.user.login}}
+          MUTATE_PULL_OWNER: ${{github.event.pull_request.user.login}}
         run: echo "$MUTATE_PULL_NUMBER, $MUTATE_API_URL, $MUTATE_PULL_OWNER" && yarn mutate
