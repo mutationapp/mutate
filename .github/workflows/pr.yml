@@ -14,8 +14,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{matrix.node-version}}
-      - name: DEBUG
-        run: echo "$GITHUB_CONTEXT"
       - name: Install
         run: yarn install
       - name: Lint
