@@ -21,6 +21,7 @@ const {
       MUTATE_PULL_NUMBER,
       MUTATE_PULL_OWNER,
       INIT_CWD,
+      logger: console,
     })
   } catch (error) {
     console.log(dealWithIt(somethingWentWrong), { error })
