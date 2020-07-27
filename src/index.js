@@ -23,8 +23,6 @@ const getAppFile = shared(injectGetAppFile)({
 const getTestFile = shared(injectGetTestFile)({
   getOriginalFileName,
   getAppFile,
-  getFileExtension,
-  MATCH,
 })
 
 const getSnapshotFile = shared(injectGetSnapshotFile)({
