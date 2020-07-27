@@ -10,6 +10,8 @@ const fs = require('fs')
 const fetch = require('node-fetch')
 const path = require('path')
 const FormData = require('form-data')
+const { execSync } = require('child_process')
+
 const logger = console
 
 const dealWithIt = value => (value ? `${value} (▀̿Ĺ̯▀̿ ̿).` : '(▀̿Ĺ̯▀̿ ̿)')
@@ -29,23 +31,24 @@ const STRATEGY = {
 const SNAPSHOT_DIR = '__snapshots__'
 
 const common = {
-  unique,
-  only,
-  withMatch,
-  toPagedList,
   dealWithIt,
-  somethingWentWrong,
-  getFileExtension,
-  withSearch,
-  mergeDeep,
-  MATCH,
-  STRATEGY,
-  SNAPSHOT_DIR,
-  fs,
+  execSync,
   fetch,
-  path,
   formData: new FormData(),
+  fs,
+  getFileExtension,
   logger,
+  MATCH,
+  mergeDeep,
+  only,
+  path,
+  SNAPSHOT_DIR,
+  somethingWentWrong,
+  STRATEGY,
+  toPagedList,
+  unique,
+  withMatch,
+  withSearch,
 }
 
 const shared = inject => overrides =>
