@@ -1,7 +1,7 @@
-const mutate = require('./mutate')
+const injectMutate = require('./mutate')
 const { shared, mergeDeep, only } = require('../shared')
 
-const create = async overrides => {
+const mutate = async overrides => {
   const { inject, payload } = mergeDeep(
     {
       payload: {
@@ -11,7 +11,6 @@ const create = async overrides => {
         MUTATE_PULL_OWNER: 'MUTATE_PULL_OWNER',
         MUTATE_FILE_PATH: 'MUTATE_FILE_PATH',
         INIT_CWD: 'INIT_CWD',
-        ...overrides.payload,
       },
       inject: {
         only,
@@ -38,7 +37,7 @@ const create = async overrides => {
     overrides,
   )
 
-  await shared(mutate)(inject)(payload)
+  await shared(injectMutate)(inject)(payload)
 
   return {
     inject,
@@ -101,7 +100,7 @@ test.each([
 
   const { ok, status, text } = options.response
 
-  const { payload, inject } = await create({
+  const { payload, inject } = await mutate({
     payload: overrides.payload,
     inject: {
       fetch: jest.fn(async () => ({
