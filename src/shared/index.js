@@ -6,6 +6,12 @@ const getFileExtension = require('./getFileExtension')
 const withSearch = require('./withSearch')
 const mergeDeep = require('./mergeDeep')
 
+const fs = require('fs')
+const fetch = require('node-fetch')
+const path = require('path')
+const FormData = require('form-data')
+const logger = console
+
 const dealWithIt = value => (value ? `${value} (▀̿Ĺ̯▀̿ ̿).` : '(▀̿Ĺ̯▀̿ ̿)')
 const somethingWentWrong = dealWithIt('Something went wrong')
 
@@ -22,7 +28,7 @@ const STRATEGY = {
 
 const SNAPSHOT_DIR = '__snapshots__'
 
-module.exports = {
+const common = {
   unique,
   only,
   withMatch,
@@ -35,4 +41,20 @@ module.exports = {
   MATCH,
   STRATEGY,
   SNAPSHOT_DIR,
+  fs,
+  fetch,
+  path,
+  formData: new FormData(),
+  logger,
+}
+
+const shared = inject => overrides =>
+  inject({
+    ...common,
+    ...overrides,
+  })
+
+module.exports = {
+  ...common,
+  shared,
 }

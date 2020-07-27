@@ -1,5 +1,5 @@
 const mutate = require('./mutate')
-const { only, mergeDeep } = require('../shared')
+const { shared, mergeDeep, only } = require('../shared')
 
 const create = async overrides => {
   const { inject, payload } = mergeDeep(
@@ -38,7 +38,7 @@ const create = async overrides => {
     overrides,
   )
 
-  await mutate(inject)(payload)
+  await shared(mutate)(inject)(payload)
 
   return {
     inject,

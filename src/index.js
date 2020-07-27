@@ -8,75 +8,42 @@ const injectGetTestFile = require('./getTestFile')
 const injectMutation = require('./toMutation')
 const injectMutate = require('./mutate')
 
-const fs = require('fs')
-const fetch = require('node-fetch')
-const path = require('path')
-const FormData = require('form-data')
-const logger = console
+const { shared } = require('./shared')
 
-const {
-  only,
-  withMatch,
-  toPagedList,
-  unique,
-  getFileExtension,
-  withSearch,
-  MATCH,
-  STRATEGY,
-  SNAPSHOT_DIR,
-} = require('./shared')
+const getOriginalFileName = shared(injectGetOriginalFileName)()
 
-const { execSync } = require('child_process')
+const getFileName = shared(injectGetFileName)()
+const getInitialFiles = shared(injectGetInitialFiles)()
 
-const getOriginalFileName = injectGetOriginalFileName({
-  fs,
-  path,
+const getAppFile = shared(injectGetAppFile)({
+  getFileName,
+  getOriginalFileName,
 })
 
-const getFileName = injectGetFileName({ MATCH, SNAPSHOT_DIR })
-
-const getInitialFiles = injectGetInitialFiles({ STRATEGY, unique, execSync })
-const getAppFile = injectGetAppFile({ getFileName, getOriginalFileName })
-
-const getTestFile = injectGetTestFile({
+const getTestFile = shared(injectGetTestFile)({
   getOriginalFileName,
   getAppFile,
   getFileExtension,
   MATCH,
 })
 
-const getSnapshotFile = injectGetSnapshotFile({
+const getSnapshotFile = shared(injectGetSnapshotFile)({
   getTestFile,
   getOriginalFileName,
-  SNAPSHOT_DIR,
 })
 
-const toMutation = injectMutation({
+const toMutation = shared(injectMutation)({
   getAppFile,
   getTestFile,
   getSnapshotFile,
 })
 
-const getMutationCandidates = injectGetMutationCandidates({
+const getMutationCandidates = shared(injectGetMutationCandidates)({
   getInitialFiles,
-  withMatch,
-  toPagedList,
-  only,
-  logger,
-  MATCH,
-  STRATEGY,
   toMutation,
-  withSearch,
 })
 
-const mutate = injectMutate({
-  logger,
-  only,
-  fs,
-  fetch,
-  path,
-  formData: new FormData(),
-})
+const mutate = shared(injectMutate)()
 
 module.exports = {
   getAppFile,
