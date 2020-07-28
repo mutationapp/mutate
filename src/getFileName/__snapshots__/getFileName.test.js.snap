@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getAppFile: __snapshots__/appFile.test.js.snap 1`] = `"appFile.js"`;
+
+exports[`getAppFile: NOPE 1`] = `undefined`;
+
+exports[`getAppFile: appFile.js 1`] = `"appFile.js"`;
+
+exports[`getAppFile: appFile.test.js 1`] = `"appFile.js"`;
+
+exports[`getAppFile: null 1`] = `undefined`;

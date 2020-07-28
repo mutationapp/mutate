@@ -2,7 +2,7 @@ const injectGetAppFile = require('./getAppFile')
 const { shared } = require('../shared')
 
 test.each([{ fileName: 'fileName', originalFileName: 'originalFileName' }])(
-  'getAppFile',
+  'getAppFile: %o',
   ({ fileName, originalFileName }) => {
     const inject = {
       getOriginalFileName: jest.fn(() => originalFileName),
