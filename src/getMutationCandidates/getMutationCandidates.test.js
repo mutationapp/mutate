@@ -1,35 +1,21 @@
 const getMutationCandidates = require('./getMutationCandidates')
 
-const {
-  MATCH,
-  STRATEGY,
-  withMatch,
-  withSearch,
-  mergeDeep,
-} = require('../shared')
+const { shared, defaultsDeep, STRATEGY } = require('../shared')
 
 const getOptions = overrides =>
-  mergeDeep(
-    {
-      inject: {
-        toPagedList: jest.fn(() => m => m),
-        withMatch,
-        withSearch,
-        getInitialFiles: jest.fn(),
-        logger: {
-          info: jest.fn(),
-        },
-        MATCH,
-        toMutation: jest.fn(),
-        STRATEGY,
+  defaultsDeep(overrides, {
+    inject: {
+      toPagedList: jest.fn(() => m => m),
+      getInitialFiles: jest.fn(),
+      logger: {
+        info: jest.fn(),
       },
-      payload: {
-        MUTATE_STRATEGY: STRATEGY.all,
-      },
+      toMutation: jest.fn(),
     },
-    overrides,
-    val => val === null,
-  )
+    payload: {
+      MUTATE_STRATEGY: STRATEGY.all,
+    },
+  })
 
 test.each([
   {
@@ -63,7 +49,7 @@ test.each([
 
   const { MUTATE_BRANCH, MUTATE_STRATEGY, MUTATE_MAX, MUTATE_SKIP } = payload
 
-  const result = getMutationCandidates(inject)(payload)
+  const result = shared(getMutationCandidates)(inject)(payload)
 
   const { getInitialFiles, logger, toPagedList } = inject
 

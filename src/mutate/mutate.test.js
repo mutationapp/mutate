@@ -1,41 +1,37 @@
 const injectMutate = require('./mutate')
-const { shared, mergeDeep, only } = require('../shared')
+const { shared, defaultsDeep, only } = require('../shared')
 
 const mutate = async overrides => {
-  const { inject, payload } = mergeDeep(
-    {
-      payload: {
-        MUTATE_API_URL: 'MUTATE_API_URL',
-        MUTATE_REPOSITORY_TOKEN: 'MUTATE_REPOSITORY_TOKEN',
-        MUTATE_PULL_NUMBER: 'MUTATE_PULL_NUMBER',
-        MUTATE_PULL_OWNER: 'MUTATE_PULL_OWNER',
-        MUTATE_FILE_PATH: 'MUTATE_FILE_PATH',
-        INIT_CWD: 'INIT_CWD',
+  const { inject, payload } = defaultsDeep(overrides, {
+    payload: {
+      MUTATE_API_URL: 'MUTATE_API_URL',
+      MUTATE_REPOSITORY_TOKEN: 'MUTATE_REPOSITORY_TOKEN',
+      MUTATE_PULL_NUMBER: 'MUTATE_PULL_NUMBER',
+      MUTATE_PULL_OWNER: 'MUTATE_PULL_OWNER',
+      MUTATE_FILE_PATH: 'MUTATE_FILE_PATH',
+      INIT_CWD: 'INIT_CWD',
+    },
+    inject: {
+      fetch: jest.fn(async () => ({
+        text: async () => 'text',
+      })),
+      path: {
+        join: jest.fn(() => payload.MUTATE_FILE_PATH),
       },
-      inject: {
-        only,
-        fetch: jest.fn(async () => ({
-          text: async () => 'text',
-        })),
-        path: {
-          join: jest.fn(() => payload.MUTATE_FILE_PATH),
-        },
-        formData: {
-          append: jest.fn(),
-          getHeaders: jest.fn(),
-        },
-        logger: {
-          info: jest.fn(),
-          error: jest.fn(),
-        },
-        fs: {
-          existsSync: jest.fn(() => true),
-          createReadStream: jest.fn(value => `Stream(${value})`),
-        },
+      formData: {
+        append: jest.fn(),
+        getHeaders: jest.fn(),
+      },
+      logger: {
+        info: jest.fn(),
+        error: jest.fn(),
+      },
+      fs: {
+        existsSync: jest.fn(() => true),
+        createReadStream: jest.fn(value => `Stream(${value})`),
       },
     },
-    overrides,
-  )
+  })
 
   await shared(injectMutate)(inject)(payload)
 
@@ -82,21 +78,18 @@ test.each([
     },
   },
 ])('Mutates with %o', async overrides => {
-  const options = mergeDeep(
-    {
-      exists: true,
-      response: {
-        status: 200,
-        error: undefined,
-        ok: true,
-        text: JSON.stringify({
-          info: 'info',
-          url: 'url',
-        }),
-      },
+  const options = defaultsDeep(overrides.options, {
+    exists: true,
+    response: {
+      status: 200,
+      error: undefined,
+      ok: true,
+      text: JSON.stringify({
+        info: 'info',
+        url: 'url',
+      }),
     },
-    overrides.options,
-  )
+  })
 
   const { ok, status, text } = options.response
 
