@@ -4,7 +4,7 @@ const withMatch = require('./withMatch')
 const toPagedList = require('./toPagedList')
 const getFileExtension = require('./getFileExtension')
 const withSearch = require('./withSearch')
-const mergeDeep = require('./mergeDeep')
+const defaultsDeep = require('lodash.defaultsdeep')
 
 const fs = require('fs')
 const fetch = require('node-fetch')
@@ -32,6 +32,7 @@ const SNAPSHOT_DIR = '__snapshots__'
 
 const common = {
   dealWithIt,
+  defaultsDeep,
   execSync,
   fetch,
   formData: new FormData(),
@@ -39,7 +40,6 @@ const common = {
   getFileExtension,
   logger,
   MATCH,
-  mergeDeep,
   only,
   path,
   SNAPSHOT_DIR,
@@ -51,11 +51,7 @@ const common = {
   withSearch,
 }
 
-const shared = inject => overrides =>
-  inject({
-    ...common,
-    ...overrides,
-  })
+const shared = inject => overrides => inject(defaultsDeep(overrides, common))
 
 module.exports = {
   ...common,

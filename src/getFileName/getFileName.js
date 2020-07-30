@@ -13,9 +13,11 @@ const getFileName = ({ MATCH, SNAPSHOT_DIR }) => fileName => {
       .replace(MATCH.snapshot, '.js')
   }
 
-  if (fileName.match(MATCH.js)) {
-    return fileName
+  if (!fileName.match(MATCH.js)) {
+    return
   }
+
+  return fileName
 }
 
 module.exports = getFileName
