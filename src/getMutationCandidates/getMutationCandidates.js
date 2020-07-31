@@ -12,7 +12,7 @@ const getMutationCandidates = ({
     MUTATE_MAX = 10000,
     MUTATE_SKIP = 0,
     MUTATE_SEARCH,
-    MUTATE_STRATEGY = STRATEGY.all,
+    MUTATE_STRATEGY = STRATEGY.changed,
     MUTATE_BRANCH = 'master',
   } = payload
 
