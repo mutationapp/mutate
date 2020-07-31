@@ -34,7 +34,7 @@
     {
       "label": "mutate",
       "type": "shell",
-      "command": "yarn mutate",
+      "command": "yarn stryker && yarn mutate",
       "presentation": {
         "clear": true
       }
