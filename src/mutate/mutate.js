@@ -1,4 +1,12 @@
-const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
+const mutate = ({
+  only,
+  fetch,
+  fs,
+  path,
+  formData,
+  logger,
+  process,
+}) => async ({
   MUTATE_API_URL,
   MUTATE_REPOSITORY_TOKEN,
   MUTATE_PULL_NUMBER,
@@ -20,7 +28,7 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
 
   if (nil) {
     logger.error('REQUIRED:', nil)
-    return
+    return process.exit(1)
   }
 
   const filePath = [MUTATE_FILE_PATH]
@@ -29,7 +37,7 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
 
   if (!filePath) {
     logger.info('NO REPORT FILE FOUND IN DIRECTORY:', { MUTATE_FILE_PATH })
-    return
+    return process.exit(1)
   }
 
   formData.append('repositoryToken', MUTATE_REPOSITORY_TOKEN)
@@ -60,12 +68,12 @@ const mutate = ({ only, fetch, fs, path, formData, logger }) => async ({
 
   if (!result) {
     logger.error('RESPONSE IS INVALID:', { result })
-    return
+    return process.exit(1)
   }
 
   if (!response.ok) {
     logger.error(response.status, result.error)
-    return
+    return process.exit(1)
   }
 
   logger.info('RESPONSE:', result.info, result.url)

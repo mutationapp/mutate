@@ -1,19 +1,27 @@
-const getFileName = ({ MATCH, SNAPSHOT_DIR }) => fileName => {
+const getFileName = ({
+  MATCH,
+  SNAPSHOT_DIR,
+  getFileExtension,
+  removeFileExtension,
+}) => fileName => {
   if (typeof fileName !== 'string') {
     return
   }
 
   if (fileName.match(MATCH.test)) {
-    return fileName.replace(MATCH.test, '.js')
+    return fileName.replace(MATCH.test, `.${getFileExtension(fileName)}`)
   }
 
   if (fileName.match(MATCH.snapshot)) {
     return fileName
       .replace(`${SNAPSHOT_DIR}/`, '')
-      .replace(MATCH.snapshot, '.js')
+      .replace(
+        MATCH.snapshot,
+        `.${getFileExtension(removeFileExtension(fileName))}`,
+      )
   }
 
-  if (!fileName.match(MATCH.js)) {
+  if (!fileName.match(MATCH.mutate)) {
     return
   }
 

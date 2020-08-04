@@ -3,6 +3,7 @@ const unique = require('./unique')
 const withMatch = require('./withMatch')
 const toPagedList = require('./toPagedList')
 const getFileExtension = require('./getFileExtension')
+const removeFileExtension = require('./removeFileExtension')
 const withSearch = require('./withSearch')
 const defaultsDeep = require('lodash.defaultsdeep')
 
@@ -20,7 +21,7 @@ const somethingWentWrong = dealWithIt('Something went wrong')
 const MATCH = {
   test: /.test.[jt]sx?$/,
   snapshot: /.test.[jt]sx?.snap$/,
-  js: /.[jt]sx?$/,
+  mutate: /.[jt]sx?$/,
 }
 
 const STRATEGY = {
@@ -38,6 +39,7 @@ const common = {
   formData: new FormData(),
   fs,
   getFileExtension,
+  removeFileExtension,
   logger,
   MATCH,
   only,
@@ -49,6 +51,7 @@ const common = {
   unique,
   withMatch,
   withSearch,
+  process,
 }
 
 const shared = inject => overrides => inject(defaultsDeep(overrides, common))

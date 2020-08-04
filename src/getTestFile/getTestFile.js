@@ -11,7 +11,7 @@ const getTestFile = ({
   }
 
   const ext = getFileExtension(fileName)
-  return getOriginalFileName(appFile.replace(MATCH.js, `.test.${ext}`))
+  return getOriginalFileName(appFile.replace(MATCH.mutate, `.test.${ext}`))
 }
 
 module.exports = getTestFile
