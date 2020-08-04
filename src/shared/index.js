@@ -51,6 +51,7 @@ const common = {
   unique,
   withMatch,
   withSearch,
+  process,
 }
 
 const shared = inject => overrides => inject(defaultsDeep(overrides, common))

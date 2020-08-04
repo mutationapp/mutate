@@ -12,6 +12,9 @@ const mutate = async overrides => {
       INIT_CWD: 'INIT_CWD',
     },
     inject: {
+      process: {
+        exit: jest.fn(),
+      },
       fetch: jest.fn(async () => ({
         text: async () => 'text',
       })),
@@ -107,13 +110,20 @@ test.each([
     },
   })
 
-  const { path, fs, formData, logger, fetch } = inject
+  const {
+    path,
+    fs,
+    formData,
+    logger,
+    fetch,
+    process: { exit },
+  } = inject
 
   {
     const nil = only(payload, x => x == null)
     if (nil) {
       expect(logger.error).toHaveBeenCalledWith('REQUIRED:', nil)
-      return
+      return expect(exit).toHaveBeenCalledWith(1)
     }
   }
 
@@ -130,8 +140,7 @@ test.each([
           MUTATE_FILE_PATH: payload.MUTATE_FILE_PATH,
         },
       )
-
-      return
+      return expect(exit).toHaveBeenCalledWith(1)
     }
   }
 
@@ -168,7 +177,7 @@ test.each([
         result: json,
       })
 
-      return
+      return expect(exit).toHaveBeenCalledWith(1)
     }
 
     ok
@@ -177,6 +186,9 @@ test.each([
           json.info,
           json.url,
         )
-      : expect(logger.error).toHaveBeenCalledWith(status, json.error)
+      : (() => {
+          expect(logger.error).toHaveBeenCalledWith(status, json.error)
+          return expect(exit).toHaveBeenCalledWith(1)
+        })()
   }
 })
