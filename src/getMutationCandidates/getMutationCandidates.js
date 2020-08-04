@@ -29,7 +29,7 @@ const getMutationCandidates = ({
     strategy,
   })
 
-  const match = [Match.mutate, MATCH.test]
+  const match = [MATCH.mutate, MATCH.test]
 
   const mutationCandidates = initialFiles
     .filter(withMatch(match))

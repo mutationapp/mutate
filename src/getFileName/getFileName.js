@@ -13,7 +13,7 @@ const getFileName = ({ MATCH, SNAPSHOT_DIR }) => fileName => {
       .replace(MATCH.snapshot, '.js')
   }
 
-  if (!fileName.match(Match.mutate)) {
+  if (!fileName.match(MATCH.mutate)) {
     return
   }
 
