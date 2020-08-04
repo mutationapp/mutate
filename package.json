@@ -1,5 +1,5 @@
 {
-  "name": "mutate",
+  "name": "@mutationapp/mutate",
   "version": "1.0.0",
   "description": "Mutatation.app report uploader ",
   "main": "index.js",
