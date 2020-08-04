@@ -14,8 +14,6 @@ const getOptions = overrides =>
     },
     payload: {
       MUTATE_STRATEGY: STRATEGY.all,
-      MUTATE_BRANCH: 'master',
-      MUTATE_SEARCH: undefined,
     },
   })
 
@@ -49,13 +47,23 @@ test.each([
     },
   })
 
-  const { MUTATE_BRANCH, MUTATE_STRATEGY, MUTATE_MAX, MUTATE_SKIP } = payload
+  const {
+    MUTATE_BRANCH = 'master',
+    MUTATE_STRATEGY,
+    MUTATE_MAX,
+    MUTATE_SKIP,
+  } = payload
 
   const result = shared(getMutationCandidates)(inject)(payload)
 
   const { getInitialFiles, logger, toPagedList } = inject
 
-  expect(logger.info).toHaveBeenCalledWith('MUTATION OPTIONS:\n', payload)
+  expect(logger.info).toHaveBeenCalledWith('MUTATION OPTIONS:\n', {
+    MUTATE_BRANCH,
+    MUTATE_STRATEGY,
+    MUTATE_MAX,
+    MUTATE_SKIP,
+  })
   expect(getInitialFiles).toHaveBeenCalledWith({
     branch: MUTATE_BRANCH,
     strategy: MUTATE_STRATEGY,
