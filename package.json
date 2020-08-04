@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "Mutatation.app report uploader",
   "main": "index.js",
-  "repository": "git@github.com:mutationapp/mutate.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mutationapp/mutate.git"
+  },
   "author": "ibsukru",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "engines": {
     "node": "12.x",
     "yarn": "1.x"
@@ -38,5 +41,14 @@
     "hooks": {
       "pre-push": "yarn lint && yarn test"
     }
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/mutationapp/mutate/issues"
+  },
+  "homepage": "https://github.com/mutationapp/mutate#readme",
+  "keywords": [
+    "mutation",
+    "testing",
+    "supercharged."
+  ]
 }
