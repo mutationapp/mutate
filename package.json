@@ -1,11 +1,14 @@
 {
   "name": "@mutationapp/mutate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mutatation.app report uploader",
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/mutationapp/mutate.git"
+  },
+  "bin": {
+    "mutate": "./bin/index.js"
   },
   "author": "ibsukru",
   "license": "Apache-2.0",
