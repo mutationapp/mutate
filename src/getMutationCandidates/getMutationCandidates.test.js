@@ -14,6 +14,8 @@ const getOptions = overrides =>
     },
     payload: {
       MUTATE_STRATEGY: STRATEGY.all,
+      MUTATE_BRANCH: 'master',
+      MUTATE_SEARCH: undefined,
     },
   })
 
@@ -55,7 +57,7 @@ test.each([
 
   expect(logger.info).toHaveBeenCalledWith('MUTATION OPTIONS:\n', payload)
   expect(getInitialFiles).toHaveBeenCalledWith({
-    branch: MUTATE_BRANCH || 'master',
+    branch: MUTATE_BRANCH,
     strategy: MUTATE_STRATEGY,
   })
 

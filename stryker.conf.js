@@ -4,8 +4,8 @@
 
 const { getMutationCandidates } = require('./src')
 
-const { files, mutate, page } = getMutationCandidates({})
-console.log(`{ files, mutate, page }`, { files, mutate, page })
+const { files, mutate } = getMutationCandidates()
+console.log('MUTATION CANDIDATES\n', mutate)
 
 module.exports = {
   files: files.length ? ['jest/**/*.js', '**/shared/*.js', ...files] : [],

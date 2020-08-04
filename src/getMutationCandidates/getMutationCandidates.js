@@ -7,7 +7,7 @@ const getMutationCandidates = ({
   STRATEGY,
   withMatch,
   withSearch,
-}) => payload => {
+}) => (payload = {}) => {
   const {
     MUTATE_MAX = 10000,
     MUTATE_SKIP = 0,
@@ -16,7 +16,13 @@ const getMutationCandidates = ({
     MUTATE_BRANCH = 'master',
   } = payload
 
-  logger.info('MUTATION OPTIONS:\n', payload)
+  logger.info('MUTATION OPTIONS:\n', {
+    MUTATE_MAX,
+    MUTATE_SKIP,
+    MUTATE_SEARCH,
+    MUTATE_STRATEGY,
+    MUTATE_BRANCH,
+  })
 
   const size = parseInt(MUTATE_MAX)
   const page = parseInt(MUTATE_SKIP) + 1
