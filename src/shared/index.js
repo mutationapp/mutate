@@ -20,7 +20,7 @@ const somethingWentWrong = dealWithIt('Something went wrong')
 const MATCH = {
   test: /.test.[jt]sx?$/,
   snapshot: /.test.[jt]sx?.snap$/,
-  js: /.[jt]sx?$/,
+  mutate: /.[jt]sx?$/,
 }
 
 const STRATEGY = {
