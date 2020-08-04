@@ -1,5 +1,5 @@
 const getFileExtension = fileName => {
-  if (!fileName) {
+  if (typeof fileName !== 'string') {
     return
   }
 

@@ -3,6 +3,7 @@ const unique = require('./unique')
 const withMatch = require('./withMatch')
 const toPagedList = require('./toPagedList')
 const getFileExtension = require('./getFileExtension')
+const removeFileExtension = require('./removeFileExtension')
 const withSearch = require('./withSearch')
 const defaultsDeep = require('lodash.defaultsdeep')
 
@@ -38,6 +39,7 @@ const common = {
   formData: new FormData(),
   fs,
   getFileExtension,
+  removeFileExtension,
   logger,
   MATCH,
   only,
