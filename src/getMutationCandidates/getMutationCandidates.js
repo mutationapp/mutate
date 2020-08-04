@@ -35,6 +35,10 @@ const getMutationCandidates = ({
     strategy,
   })
 
+  if (!Array.isArray(initialFiles)) {
+    return {}
+  }
+
   const match = [MATCH.mutate, MATCH.test]
 
   const mutationCandidates = initialFiles

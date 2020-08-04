@@ -20,6 +20,15 @@ const getOptions = overrides =>
 test.each([
   {
     payload: {
+      MUTATE_SKIP: 1,
+      MUTATE_MAX: 200,
+    },
+    options: {
+      files: null,
+    },
+  },
+  {
+    payload: {
       MUTATE_SKIP: 0,
       MUTATE_MAX: 20,
     },
@@ -35,7 +44,7 @@ test.each([
 ])('getMutationCandidates', ({ options, ...overrides }) => {
   const { files } = options
 
-  const initialFiles = Object.keys(files) || []
+  const initialFiles = files ? Object.keys(files) : undefined
 
   const { inject, payload } = getOptions({
     ...overrides,
@@ -64,10 +73,15 @@ test.each([
     MUTATE_MAX,
     MUTATE_SKIP,
   })
+
   expect(getInitialFiles).toHaveBeenCalledWith({
     branch: MUTATE_BRANCH,
     strategy: MUTATE_STRATEGY,
   })
+
+  if (!initialFiles) {
+    return expect(result).toEqual({})
+  }
 
   expect(toPagedList).toHaveBeenCalledWith({
     size: MUTATE_MAX,
@@ -76,4 +90,3 @@ test.each([
 
   expect({ result, files }).toMatchSnapshot()
 })
-// })
