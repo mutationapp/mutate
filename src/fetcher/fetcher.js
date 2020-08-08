@@ -1,12 +1,5 @@
 const fetcher = ({ fetch, ApiError }) => async (input, init) => {
-  const response = await fetch(input, {
-    ...init,
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...init.headers,
-    },
-  })
+  const response = await fetch(input, init)
 
   const result = await (async () => {
     try {

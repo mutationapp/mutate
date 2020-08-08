@@ -1,5 +1,5 @@
 const injectMutate = require('./mutate')
-const { shared, defaultsDeep, only, ApiError } = require('../shared')
+const { shared, defaultsDeep, only } = require('../shared')
 
 const mutate = async overrides => {
   const { inject, payload } = defaultsDeep(overrides, {
@@ -54,52 +54,26 @@ test.each([
     },
   },
   {
-    options: {
-      response: {
-        status: 401,
-        data: { error: 'Unauthorized' },
-      },
-    },
-  },
-  {
-    options: {
-      response: {
-        status: 403,
-        data: { error: 'Forbidden' },
-      },
-    },
-  },
-  {
     payload: {
       MUTATE_FILE_PATH: 'NOT_EXIST',
     },
   },
 ])('Mutates with %o', async overrides => {
   const options = defaultsDeep(overrides.options, {
-    response: {
-      status: 200,
-      data: {
-        info: 'info',
-        url: 'url',
-      },
+    data: {
+      info: 'info',
+      url: 'url',
     },
   })
 
-  const { status, data } = options.response
-  const { error } = data
+  const { data } = options
 
   const exists = (overrides.payload || {}).MUTATE_FILE_PATH !== 'NOT_EXIST'
 
   const { payload, inject } = await mutate({
     payload: overrides.payload,
     inject: {
-      fetcher: jest.fn(async () => {
-        if (error) {
-          throw new ApiError(status, error, data)
-        }
-
-        return data
-      }),
+      fetcher: jest.fn(async () => data),
       fs: {
         existsSync: jest.fn(() => exists),
       },
@@ -161,18 +135,11 @@ test.each([
 
   expect(formData.getHeaders).toHaveBeenCalledTimes(1)
 
-  {
-    await expect(fetcher).toHaveBeenCalledWith(MUTATE_API_URL, {
-      method: 'POST',
-      headers: {},
-      body: formData,
-    })
+  await expect(fetcher).toHaveBeenCalledWith(MUTATE_API_URL, {
+    method: 'POST',
+    headers: {},
+    body: formData,
+  })
 
-    if (error) {
-      expect(logger.error).toHaveBeenCalledWith(status, error, data)
-      return expect(exit).toHaveBeenCalledWith(status === 401 ? 0 : 1)
-    }
-
-    expect(logger.info).toHaveBeenCalledWith(data.info, data.url)
-  }
+  expect(logger.info).toHaveBeenCalledWith(data.info, data.url)
 })

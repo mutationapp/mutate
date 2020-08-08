@@ -46,20 +46,15 @@ const mutate = ({
   formData.append('escape', INIT_CWD + '/')
   formData.append('file', fs.createReadStream(filePath))
 
-  try {
-    const result = await fetcher(MUTATE_API_URL, {
-      method: 'POST',
-      headers: {
-        ...formData.getHeaders(),
-      },
-      body: formData,
-    })
+  const result = await fetcher(MUTATE_API_URL, {
+    method: 'POST',
+    headers: {
+      ...formData.getHeaders(),
+    },
+    body: formData,
+  })
 
-    logger.info(result.info, result.url)
-  } catch (error) {
-    logger.error(error.status, error.message, error.data)
-    return process.exit(error.status === 401 ? 0 : 1)
-  }
+  logger.info(result.info, result.url)
 }
 
 module.exports = mutate
