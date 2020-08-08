@@ -1,2 +1,3 @@
-const unique = (item, index, array) => array.indexOf(item) === index
+const unique = ({ uniqWith, isEqual }) => array => uniqWith(array, isEqual)
+
 module.exports = unique

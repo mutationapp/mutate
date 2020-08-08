@@ -488,27 +488,6 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mutationapp/mutate@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@mutationapp/mutate/-/mutate-1.0.1.tgz#0e7f4c5bd401bf52f35e8a2d40e64de3db84341a"
-  integrity sha512-lRSBdO+XZ5oWfeGtK033kHubbRaqJdTKVhSKarTq5It+8Z+ear28jBQKtTCr9F3+j1rzHKWZfhRfbR7gjIFKlA==
-  dependencies:
-    dotenv "^8.2.0"
-    form-data "^3.0.0"
-    lodash.defaultsdeep "^4.6.1"
-    node-fetch "^2.6.0"
-
-"@mutationapp/mutate@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@mutationapp/mutate/-/mutate-1.0.2.tgz#7f23d3effa417bf40697393be96b28ccb1d748cb"
-  integrity sha512-EWcYalx9Dhzfo4rDfRs/7dd6mKMa4966Cam72LLSR15o8cH7bgAtMexk8TqwsdY1lDvf5iwxzMIN6ZWJwn/HpA==
-  dependencies:
-    "@mutationapp/mutate" "^1.0.1"
-    dotenv "^8.2.0"
-    form-data "^3.0.0"
-    lodash.defaultsdeep "^4.6.1"
-    node-fetch "^2.6.0"
-
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.1.tgz#e7df00f98a203324f6dc7cc606cad9d4a8ab2217"
