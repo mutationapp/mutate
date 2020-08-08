@@ -26,7 +26,7 @@ const { somethingWentWrong } = require('../src/shared')
     })
   } catch (error) {
     console.log(
-      somethingWentWrong,
+      error.message || somethingWentWrong,
       MUTATE_LOG_LEVEL === 'debug'
         ? error.data
         : `Run with MUTATE_LOG_LEVEL=true to debug`,

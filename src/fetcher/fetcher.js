@@ -10,9 +10,9 @@ const fetcher = ({ fetch, ApiError }) => async (input, init) => {
   })()
 
   if (!response.ok) {
-    const result = response || {}
+    const { error, data } = result || {}
 
-    throw new ApiError(result.status, response.error, response.data)
+    throw new ApiError(response.status, error, data)
   }
 
   return result
