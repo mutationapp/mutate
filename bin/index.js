@@ -11,7 +11,6 @@ const {
 } = process.env
 
 const { mutate } = require('../src')
-const { dealWithIt, somethingWentWrong } = require('../src/shared')
 
 ;(async () => {
   try {
@@ -24,11 +23,7 @@ const { dealWithIt, somethingWentWrong } = require('../src/shared')
       INIT_CWD,
     })
   } catch (error) {
-    console.log(dealWithIt(somethingWentWrong), { error })
+    console.log(error.status, error.message, error.data)
     process.exit(1)
   }
 })()
-
-// console.log(process.argv, process.env, 'aassasa')
-
-// const greet = require('../lib/greet')

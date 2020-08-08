@@ -1,5 +1,5 @@
 const injectMutate = require('./mutate')
-const { shared, defaultsDeep, only } = require('../shared')
+const { shared, defaultsDeep, only, ApiError } = require('../shared')
 
 const mutate = async overrides => {
   const { inject, payload } = defaultsDeep(overrides, {
@@ -15,9 +15,7 @@ const mutate = async overrides => {
       process: {
         exit: jest.fn(),
       },
-      fetch: jest.fn(async () => ({
-        text: async () => 'text',
-      })),
+      fetcher: jest.fn(async () => ({})),
       path: {
         join: jest.fn(() => payload.MUTATE_FILE_PATH),
       },
@@ -54,21 +52,20 @@ test.each([
     payload: {
       INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
     },
+  },
+  {
     options: {
       response: {
-        ok: false,
         status: 401,
-        text: JSON.stringify({ error: 'Something went wrong' }),
+        data: { error: 'Unauthorized' },
       },
     },
   },
   {
-    payload: {
-      INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
-    },
     options: {
       response: {
-        text: 'invalid',
+        status: 403,
+        data: { error: 'Forbidden' },
       },
     },
   },
@@ -76,36 +73,35 @@ test.each([
     payload: {
       MUTATE_FILE_PATH: 'NOT_EXIST',
     },
-    options: {
-      exists: false,
-    },
   },
 ])('Mutates with %o', async overrides => {
   const options = defaultsDeep(overrides.options, {
-    exists: true,
     response: {
       status: 200,
-      error: undefined,
-      ok: true,
-      text: JSON.stringify({
+      data: {
         info: 'info',
         url: 'url',
-      }),
+      },
     },
   })
 
-  const { ok, status, text } = options.response
+  const { status, data } = options.response
+  const { error } = data
+
+  const exists = (overrides.payload || {}).MUTATE_FILE_PATH !== 'NOT_EXIST'
 
   const { payload, inject } = await mutate({
     payload: overrides.payload,
     inject: {
-      fetch: jest.fn(async () => ({
-        status,
-        ok,
-        text: async () => text,
-      })),
+      fetcher: jest.fn(async () => {
+        if (error) {
+          throw new ApiError(status, error, data)
+        }
+
+        return data
+      }),
       fs: {
-        existsSync: jest.fn(() => options.exists),
+        existsSync: jest.fn(() => exists),
       },
     },
   })
@@ -115,7 +111,7 @@ test.each([
     fs,
     formData,
     logger,
-    fetch,
+    fetcher,
     process: { exit },
   } = inject
 
@@ -127,17 +123,23 @@ test.each([
     }
   }
 
-  {
-    expect(path.join).toHaveBeenCalledWith(
-      payload.INIT_CWD,
-      payload.MUTATE_FILE_PATH,
-    )
+  const {
+    MUTATE_FILE_PATH,
+    INIT_CWD,
+    MUTATE_REPOSITORY_TOKEN,
+    MUTATE_PULL_NUMBER,
+    MUTATE_PULL_OWNER,
+    MUTATE_API_URL,
+  } = payload
 
-    if (!options.exists) {
+  {
+    expect(path.join).toHaveBeenCalledWith(INIT_CWD, MUTATE_FILE_PATH)
+
+    if (!exists) {
       expect(logger.info).toHaveBeenCalledWith(
         'NO REPORT FILE FOUND IN DIRECTORY:',
         {
-          MUTATE_FILE_PATH: payload.MUTATE_FILE_PATH,
+          MUTATE_FILE_PATH,
         },
       )
       return expect(exit).toHaveBeenCalledWith(1)
@@ -145,50 +147,32 @@ test.each([
   }
 
   {
-    expect(fs.existsSync).toHaveBeenCalledWith(payload.MUTATE_FILE_PATH)
+    expect(fs.existsSync).toHaveBeenCalledWith(MUTATE_FILE_PATH)
     ;[
-      ['repositoryToken', payload.MUTATE_REPOSITORY_TOKEN],
-      ['pullNumber', payload.MUTATE_PULL_NUMBER],
-      ['pullOwner', payload.MUTATE_PULL_OWNER],
-      ['escape', payload.INIT_CWD + '/'],
-      ['file', `Stream(${payload.MUTATE_FILE_PATH})`],
+      ['repositoryToken', MUTATE_REPOSITORY_TOKEN],
+      ['pullNumber', MUTATE_PULL_NUMBER],
+      ['pullOwner', MUTATE_PULL_OWNER],
+      ['escape', INIT_CWD + '/'],
+      ['file', `Stream(${MUTATE_FILE_PATH})`],
     ].forEach(([key, value]) => {
       expect(formData.append).toHaveBeenCalledWith(key, value)
     })
   }
 
+  expect(formData.getHeaders).toHaveBeenCalledTimes(1)
+
   {
-    await expect(fetch).toHaveBeenCalledWith(payload.MUTATE_API_URL, {
+    await expect(fetcher).toHaveBeenCalledWith(MUTATE_API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {},
       body: formData,
     })
 
-    const json = (() => {
-      try {
-        return JSON.parse(text)
-      } catch (error) {}
-    })()
-
-    if (!json) {
-      expect(logger.error).toHaveBeenCalledWith('RESPONSE IS INVALID:', {
-        result: json,
-      })
-
-      return expect(exit).toHaveBeenCalledWith(1)
+    if (error) {
+      expect(logger.error).toHaveBeenCalledWith(status, error, data)
+      return expect(exit).toHaveBeenCalledWith(status === 401 ? 0 : 1)
     }
 
-    ok
-      ? expect(logger.info).toHaveBeenCalledWith(
-          'RESPONSE:',
-          json.info,
-          json.url,
-        )
-      : (() => {
-          expect(logger.error).toHaveBeenCalledWith(status, json.error)
-          return expect(exit).toHaveBeenCalledWith(1)
-        })()
+    expect(logger.info).toHaveBeenCalledWith(data.info, data.url)
   }
 })

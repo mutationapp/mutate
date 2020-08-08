@@ -1,3 +1,4 @@
+const ApiError = require('./apiError')
 const only = require('./only')
 const unique = require('./unique')
 const withMatch = require('./withMatch')
@@ -32,6 +33,7 @@ const STRATEGY = {
 const SNAPSHOT_DIR = '__snapshots__'
 
 const common = {
+  ApiError,
   dealWithIt,
   defaultsDeep,
   execSync,
