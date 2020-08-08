@@ -1,6 +1,6 @@
 {
   "name": "@mutationapp/mutate",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Mutatation.app report uploader",
   "main": "index.js",
   "repository": {
