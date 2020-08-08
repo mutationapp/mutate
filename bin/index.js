@@ -7,11 +7,12 @@ const {
   MUTATE_REPOSITORY_TOKEN,
   MUTATE_PULL_NUMBER,
   MUTATE_PULL_OWNER,
+  MUTATE_LOG_LEVEL = 'debug',
   INIT_CWD = process.cwd(),
 } = process.env
 
 const { mutate } = require('../src')
-const { dealWithIt, somethingWentWrong } = require('../src/shared')
+const { somethingWentWrong } = require('../src/shared')
 
 ;(async () => {
   try {
@@ -24,11 +25,12 @@ const { dealWithIt, somethingWentWrong } = require('../src/shared')
       INIT_CWD,
     })
   } catch (error) {
-    console.log(dealWithIt(somethingWentWrong), { error })
-    process.exit(1)
+    console.log(
+      error.message || somethingWentWrong,
+      MUTATE_LOG_LEVEL === 'debug'
+        ? error.data
+        : `Run with MUTATE_LOG_LEVEL=true to debug`,
+    )
+    process.exit(error.status === 401 ? 0 : 1)
   }
 })()
-
-// console.log(process.argv, process.env, 'aassasa')
-
-// const greet = require('../lib/greet')

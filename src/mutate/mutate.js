@@ -1,6 +1,6 @@
 const mutate = ({
   only,
-  fetch,
+  fetcher,
   fs,
   path,
   formData,
@@ -46,37 +46,15 @@ const mutate = ({
   formData.append('escape', INIT_CWD + '/')
   formData.append('file', fs.createReadStream(filePath))
 
-  const response = await fetch(MUTATE_API_URL, {
+  const result = await fetcher(MUTATE_API_URL, {
     method: 'POST',
     headers: {
       ...formData.getHeaders(),
-      'Content-Type': 'application/json',
     },
     body: formData,
   })
 
-  const result = await (async () => {
-    const text = await response.text()
-    if (!text) {
-      return
-    }
-
-    try {
-      return JSON.parse(text)
-    } catch (error) {}
-  })()
-
-  if (!result) {
-    logger.error('RESPONSE IS INVALID:', { result })
-    return process.exit(1)
-  }
-
-  if (!response.ok) {
-    logger.error(response.status, result.error)
-    return process.exit(1)
-  }
-
-  logger.info('RESPONSE:', result.info, result.url)
+  logger.info(result.info, result.url)
 }
 
 module.exports = mutate

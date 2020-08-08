@@ -1,12 +1,13 @@
+const ApiError = require('./apiError')
 const only = require('./only')
-const unique = require('./unique')
 const withMatch = require('./withMatch')
 const toPagedList = require('./toPagedList')
 const getFileExtension = require('./getFileExtension')
 const removeFileExtension = require('./removeFileExtension')
 const withSearch = require('./withSearch')
-const defaultsDeep = require('lodash.defaultsdeep')
+const { defaultsDeep, uniqWith, isEqual } = require('lodash')
 
+const unique = require('./unique')({ uniqWith, isEqual })
 const fs = require('fs')
 const fetch = require('node-fetch')
 const path = require('path')
@@ -32,6 +33,7 @@ const STRATEGY = {
 const SNAPSHOT_DIR = '__snapshots__'
 
 const common = {
+  ApiError,
   dealWithIt,
   defaultsDeep,
   execSync,

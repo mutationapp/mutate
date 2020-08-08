@@ -1,5 +1,6 @@
 const injectGetOriginalFileName = require('./getOriginalFileName')
 const injectGetAppFile = require('./getAppFile')
+const injectFetcher = require('./fetcher')
 const injectGetSnapshotFile = require('./getSnapshotFile')
 const injectGetFileName = require('./getFileName')
 const injectGetInitialFiles = require('./getInitialFiles')
@@ -9,6 +10,8 @@ const injectMutation = require('./toMutation')
 const injectMutate = require('./mutate')
 
 const { shared } = require('./shared')
+
+const fetcher = shared(injectFetcher)()
 
 const getOriginalFileName = shared(injectGetOriginalFileName)()
 
@@ -41,7 +44,9 @@ const getMutationCandidates = shared(injectGetMutationCandidates)({
   toMutation,
 })
 
-const mutate = shared(injectMutate)()
+const mutate = shared(injectMutate)({
+  fetcher,
+})
 
 module.exports = {
   getAppFile,

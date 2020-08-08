@@ -15,9 +15,7 @@ const mutate = async overrides => {
       process: {
         exit: jest.fn(),
       },
-      fetch: jest.fn(async () => ({
-        text: async () => 'text',
-      })),
+      fetcher: jest.fn(async () => ({})),
       path: {
         join: jest.fn(() => payload.MUTATE_FILE_PATH),
       },
@@ -54,58 +52,30 @@ test.each([
     payload: {
       INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
     },
-    options: {
-      response: {
-        ok: false,
-        status: 401,
-        text: JSON.stringify({ error: 'Something went wrong' }),
-      },
-    },
-  },
-  {
-    payload: {
-      INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
-    },
-    options: {
-      response: {
-        text: 'invalid',
-      },
-    },
   },
   {
     payload: {
       MUTATE_FILE_PATH: 'NOT_EXIST',
     },
-    options: {
-      exists: false,
-    },
   },
 ])('Mutates with %o', async overrides => {
   const options = defaultsDeep(overrides.options, {
-    exists: true,
-    response: {
-      status: 200,
-      error: undefined,
-      ok: true,
-      text: JSON.stringify({
-        info: 'info',
-        url: 'url',
-      }),
+    data: {
+      info: 'info',
+      url: 'url',
     },
   })
 
-  const { ok, status, text } = options.response
+  const { data } = options
+
+  const exists = (overrides.payload || {}).MUTATE_FILE_PATH !== 'NOT_EXIST'
 
   const { payload, inject } = await mutate({
     payload: overrides.payload,
     inject: {
-      fetch: jest.fn(async () => ({
-        status,
-        ok,
-        text: async () => text,
-      })),
+      fetcher: jest.fn(async () => data),
       fs: {
-        existsSync: jest.fn(() => options.exists),
+        existsSync: jest.fn(() => exists),
       },
     },
   })
@@ -115,7 +85,7 @@ test.each([
     fs,
     formData,
     logger,
-    fetch,
+    fetcher,
     process: { exit },
   } = inject
 
@@ -127,17 +97,23 @@ test.each([
     }
   }
 
-  {
-    expect(path.join).toHaveBeenCalledWith(
-      payload.INIT_CWD,
-      payload.MUTATE_FILE_PATH,
-    )
+  const {
+    MUTATE_FILE_PATH,
+    INIT_CWD,
+    MUTATE_REPOSITORY_TOKEN,
+    MUTATE_PULL_NUMBER,
+    MUTATE_PULL_OWNER,
+    MUTATE_API_URL,
+  } = payload
 
-    if (!options.exists) {
+  {
+    expect(path.join).toHaveBeenCalledWith(INIT_CWD, MUTATE_FILE_PATH)
+
+    if (!exists) {
       expect(logger.info).toHaveBeenCalledWith(
         'NO REPORT FILE FOUND IN DIRECTORY:',
         {
-          MUTATE_FILE_PATH: payload.MUTATE_FILE_PATH,
+          MUTATE_FILE_PATH,
         },
       )
       return expect(exit).toHaveBeenCalledWith(1)
@@ -145,50 +121,25 @@ test.each([
   }
 
   {
-    expect(fs.existsSync).toHaveBeenCalledWith(payload.MUTATE_FILE_PATH)
+    expect(fs.existsSync).toHaveBeenCalledWith(MUTATE_FILE_PATH)
     ;[
-      ['repositoryToken', payload.MUTATE_REPOSITORY_TOKEN],
-      ['pullNumber', payload.MUTATE_PULL_NUMBER],
-      ['pullOwner', payload.MUTATE_PULL_OWNER],
-      ['escape', payload.INIT_CWD + '/'],
-      ['file', `Stream(${payload.MUTATE_FILE_PATH})`],
+      ['repositoryToken', MUTATE_REPOSITORY_TOKEN],
+      ['pullNumber', MUTATE_PULL_NUMBER],
+      ['pullOwner', MUTATE_PULL_OWNER],
+      ['escape', INIT_CWD + '/'],
+      ['file', `Stream(${MUTATE_FILE_PATH})`],
     ].forEach(([key, value]) => {
       expect(formData.append).toHaveBeenCalledWith(key, value)
     })
   }
 
-  {
-    await expect(fetch).toHaveBeenCalledWith(payload.MUTATE_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: formData,
-    })
+  expect(formData.getHeaders).toHaveBeenCalledTimes(1)
 
-    const json = (() => {
-      try {
-        return JSON.parse(text)
-      } catch (error) {}
-    })()
+  await expect(fetcher).toHaveBeenCalledWith(MUTATE_API_URL, {
+    method: 'POST',
+    headers: {},
+    body: formData,
+  })
 
-    if (!json) {
-      expect(logger.error).toHaveBeenCalledWith('RESPONSE IS INVALID:', {
-        result: json,
-      })
-
-      return expect(exit).toHaveBeenCalledWith(1)
-    }
-
-    ok
-      ? expect(logger.info).toHaveBeenCalledWith(
-          'RESPONSE:',
-          json.info,
-          json.url,
-        )
-      : (() => {
-          expect(logger.error).toHaveBeenCalledWith(status, json.error)
-          return expect(exit).toHaveBeenCalledWith(1)
-        })()
-  }
+  expect(logger.info).toHaveBeenCalledWith(data.info, data.url)
 })

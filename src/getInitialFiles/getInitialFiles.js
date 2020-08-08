@@ -31,7 +31,7 @@ const getInitialFiles = ({ STRATEGY, unique, execSync }) => ({
     return
   }
 
-  return toString.trim().split('\n').filter(unique)
+  return unique(toString.trim().split('\n'))
 }
 
 module.exports = getInitialFiles

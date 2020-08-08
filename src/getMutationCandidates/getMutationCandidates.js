@@ -7,6 +7,7 @@ const getMutationCandidates = ({
   STRATEGY,
   withMatch,
   withSearch,
+  unique,
 }) => (payload = {}) => {
   const {
     MUTATE_MAX = 10000,
@@ -41,11 +42,13 @@ const getMutationCandidates = ({
 
   const match = [MATCH.mutate, MATCH.test]
 
-  const mutationCandidates = initialFiles
-    .filter(withMatch(match))
-    .filter(withSearch(search))
-    .map(x => toMutation(x))
-    .filter(Boolean)
+  const mutationCandidates = unique(
+    initialFiles
+      .filter(withMatch(match))
+      .filter(withSearch(search))
+      .map(x => toMutation(x))
+      .filter(Boolean),
+  )
 
   const pageCount = Math.ceil(mutationCandidates.length / size)
   const pagedList = toPagedList({ size, page })(mutationCandidates)
