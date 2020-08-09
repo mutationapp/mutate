@@ -1,6 +1,5 @@
 const injectMutate = require('./mutate')
 const { shared, defaultsDeep, only } = require('../shared')
-console.log(`shared`, shared)
 
 const mutate = async overrides => {
   const { inject, payload } = defaultsDeep(overrides, {
