@@ -15,10 +15,13 @@ const mutate = async overrides => {
       process: {
         exit: jest.fn(),
       },
-      fetcher: jest.fn(async () => ({})),
-      path: {
-        join: jest.fn(() => payload.MUTATE_FILE_PATH),
+      Buffer: {
+        from: jest.fn(value => `Buffer.from(${value})`),
       },
+      JSON: {
+        stringify: jest.fn(value => `JSON.stringify(${value})`),
+      },
+      fetcher: jest.fn(async () => ({})),
       formData: {
         append: jest.fn(),
         getHeaders: jest.fn(),
@@ -27,10 +30,7 @@ const mutate = async overrides => {
         info: jest.fn(),
         error: jest.fn(),
       },
-      fs: {
-        existsSync: jest.fn(() => true),
-        createReadStream: jest.fn(value => `Stream(${value})`),
-      },
+      merge: jest.fn(),
     },
   })
 
@@ -74,15 +74,12 @@ test.each([
     payload: overrides.payload,
     inject: {
       fetcher: jest.fn(async () => data),
-      fs: {
-        existsSync: jest.fn(() => exists),
-      },
+      merge: jest.fn(() => (exists ? 'file' : undefined)),
     },
   })
 
   const {
-    path,
-    fs,
+    merge,
     formData,
     logger,
     fetcher,
@@ -99,7 +96,7 @@ test.each([
 
   const {
     MUTATE_FILE_PATH,
-    INIT_CWD,
+    INIT_CWD: escape,
     MUTATE_REPOSITORY_TOKEN,
     MUTATE_PULL_NUMBER,
     MUTATE_PULL_OWNER,
@@ -107,8 +104,6 @@ test.each([
   } = payload
 
   {
-    expect(path.join).toHaveBeenCalledWith(INIT_CWD, MUTATE_FILE_PATH)
-
     if (!exists) {
       expect(logger.info).toHaveBeenCalledWith(
         'NO REPORT FILE FOUND IN DIRECTORY:',
@@ -121,13 +116,13 @@ test.each([
   }
 
   {
-    expect(fs.existsSync).toHaveBeenCalledWith(MUTATE_FILE_PATH)
+    expect(merge).toHaveBeenCalledWith({ MUTATE_FILE_PATH, escape })
     ;[
       ['repositoryToken', MUTATE_REPOSITORY_TOKEN],
       ['pullNumber', MUTATE_PULL_NUMBER],
       ['pullOwner', MUTATE_PULL_OWNER],
-      ['escape', INIT_CWD + '/'],
-      ['file', `Stream(${MUTATE_FILE_PATH})`],
+      ['escape', escape],
+      ['file', `Buffer.from(JSON.stringify(file))`],
     ].forEach(([key, value]) => {
       expect(formData.append).toHaveBeenCalledWith(key, value)
     })

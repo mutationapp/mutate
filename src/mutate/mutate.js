@@ -1,11 +1,12 @@
 const mutate = ({
+  JSON,
+  Buffer,
   only,
   fetcher,
-  fs,
-  path,
   formData,
   logger,
   process,
+  merge,
 }) => async ({
   MUTATE_API_URL,
   MUTATE_REPOSITORY_TOKEN,
@@ -31,11 +32,11 @@ const mutate = ({
     return process.exit(1)
   }
 
-  const filePath = [MUTATE_FILE_PATH]
-    .map(file => path.join(INIT_CWD, file))
-    .find(path => fs.existsSync(path))
+  const escape = INIT_CWD
 
-  if (!filePath) {
+  const file = merge({ MUTATE_FILE_PATH, escape })
+
+  if (!file) {
     logger.info('NO REPORT FILE FOUND IN DIRECTORY:', { MUTATE_FILE_PATH })
     return process.exit(1)
   }
@@ -43,8 +44,8 @@ const mutate = ({
   formData.append('repositoryToken', MUTATE_REPOSITORY_TOKEN)
   formData.append('pullNumber', MUTATE_PULL_NUMBER)
   formData.append('pullOwner', MUTATE_PULL_OWNER)
-  formData.append('escape', INIT_CWD + '/')
-  formData.append('file', fs.createReadStream(filePath))
+  formData.append('escape', escape)
+  formData.append('file', Buffer.from(JSON.stringify(file)))
 
   const result = await fetcher(MUTATE_API_URL, {
     method: 'POST',

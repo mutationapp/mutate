@@ -8,6 +8,9 @@ const injectGetMutationCandidates = require('./getMutationCandidates')
 const injectGetTestFile = require('./getTestFile')
 const injectMutation = require('./toMutation')
 const injectMutate = require('./mutate')
+const injectMerge = require('./merge')
+const injectParse = require('./parse')
+const clear = require('./clear')
 
 const { shared } = require('./shared')
 
@@ -44,8 +47,15 @@ const getMutationCandidates = shared(injectGetMutationCandidates)({
   toMutation,
 })
 
+const parse = shared(injectParse)({ clear })
+
+const merge = shared(injectMerge)({
+  parse,
+})
+
 const mutate = shared(injectMutate)({
   fetcher,
+  merge,
 })
 
 module.exports = {
@@ -56,5 +66,8 @@ module.exports = {
   getTestFile,
   getMutationCandidates,
   toMutation,
+  parse,
+  merge,
   mutate,
+  clear,
 }

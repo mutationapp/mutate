@@ -4,7 +4,7 @@
 
 const { getMutationCandidates } = require('./src')
 
-const { files, mutate } = getMutationCandidates()
+const { files, mutate, page } = getMutationCandidates()
 console.log('MUTATION CANDIDATES\n', mutate)
 
 module.exports = {
@@ -16,4 +16,8 @@ module.exports = {
   testRunner: 'jest',
   transpilers: [],
   coverageAnalysis: 'off',
+  tempDirName: `.stryker-tmp-${page}`,
+  htmlReporter: {
+    baseDir: `reports/mutation/html/${page}`,
+  },
 }

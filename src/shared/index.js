@@ -1,6 +1,9 @@
+const JSON5 = require('json5')
 const ApiError = require('./apiError')
 const only = require('./only')
 const withMatch = require('./withMatch')
+const removeProp = require('./removeProp')
+const injectWalkSync = require('./walkSync')
 const toPagedList = require('./toPagedList')
 const getFileExtension = require('./getFileExtension')
 const removeFileExtension = require('./removeFileExtension')
@@ -32,8 +35,11 @@ const STRATEGY = {
 
 const SNAPSHOT_DIR = '__snapshots__'
 
+const walkSync = injectWalkSync({ fs, path })
+
 const common = {
   ApiError,
+  Buffer,
   dealWithIt,
   defaultsDeep,
   execSync,
@@ -41,19 +47,22 @@ const common = {
   formData: new FormData(),
   fs,
   getFileExtension,
-  removeFileExtension,
+  JSON: JSON5,
   logger,
   MATCH,
   only,
   path,
+  process,
+  removeFileExtension,
+  removeProp,
   SNAPSHOT_DIR,
   somethingWentWrong,
   STRATEGY,
   toPagedList,
   unique,
+  walkSync,
   withMatch,
   withSearch,
-  process,
 }
 
 const shared = inject => overrides => inject(defaultsDeep(overrides, common))
