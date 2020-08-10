@@ -31,13 +31,21 @@ const getMutationCandidates = ({
   const strategy = MUTATE_STRATEGY
   const branch = MUTATE_BRANCH
 
+  const defaults = {
+    page,
+    size,
+    search,
+    mutate: [],
+    files: [],
+  }
+
   const initialFiles = getInitialFiles({
     branch,
     strategy,
   })
 
   if (!Array.isArray(initialFiles)) {
-    return {}
+    return defaults
   }
 
   const match = [MATCH.mutate, MATCH.test]
@@ -74,10 +82,8 @@ const getMutationCandidates = ({
   )
 
   return {
-    page,
-    size,
+    ...defaults,
     pageCount,
-    search,
     mutate,
     files,
   }

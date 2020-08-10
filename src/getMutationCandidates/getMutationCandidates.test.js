@@ -14,6 +14,7 @@ const getOptions = overrides =>
     },
     payload: {
       MUTATE_STRATEGY: STRATEGY.all,
+      MUTATE_SEARCH: undefined,
     },
   })
 
@@ -61,7 +62,16 @@ test.each([
     MUTATE_STRATEGY,
     MUTATE_MAX,
     MUTATE_SKIP,
+    MUTATE_SEARCH,
   } = payload
+
+  const defaults = {
+    page: parseInt(MUTATE_SKIP) + 1,
+    size: parseInt(MUTATE_MAX),
+    search: MUTATE_SEARCH,
+    mutate: [],
+    files: [],
+  }
 
   const result = shared(getMutationCandidates)(inject)(payload)
 
@@ -80,12 +90,12 @@ test.each([
   })
 
   if (!initialFiles) {
-    return expect(result).toEqual({})
+    return expect(result).toEqual(defaults)
   }
 
   expect(toPagedList).toHaveBeenCalledWith({
-    size: MUTATE_MAX,
-    page: parseInt(MUTATE_SKIP) + 1,
+    size: defaults.size,
+    page: defaults.page,
   })
 
   expect({ result, files }).toMatchSnapshot()
