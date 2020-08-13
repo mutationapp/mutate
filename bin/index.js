@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-require('dotenv').config()
-
 const {
   MUTATE_API_URL = 'https://api.mutation.app',
   MUTATE_FILE_PATH = 'reports/mutation/html/bind-mutation-test-report.js',
