@@ -1,4 +1,3 @@
-const JSON5 = require('json5')
 const ApiError = require('./apiError')
 const only = require('./only')
 const withMatch = require('./withMatch')
@@ -31,6 +30,7 @@ const MATCH = {
 const STRATEGY = {
   all: 'all',
   changed: 'changed',
+  deleted: 'deleted',
 }
 
 const SNAPSHOT_DIR = '__snapshots__'
@@ -47,7 +47,7 @@ const common = {
   formData: new FormData(),
   fs,
   getFileExtension,
-  JSON: JSON5,
+  JSON,
   logger,
   MATCH,
   only,

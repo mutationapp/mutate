@@ -1,6 +1,6 @@
 {
   "name": "@mutationapp/mutate",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Mutatation.app report uploader",
   "main": "index.js",
   "repository": {
@@ -17,7 +17,7 @@
     "yarn": "1.x"
   },
   "scripts": {
-    "mutate": "node ./bin/index.js",
+    "mutate": "node -r dotenv/config ./bin/index.js",
     "lint": "eslint src/**/*.js",
     "lint:fix": "yarn lint --fix",
     "test": "jest",
@@ -25,15 +25,14 @@
   },
   "dependencies": {
     "form-data": "^3.0.0",
-    "json5": "^2.1.3",
     "lodash": "^4.17.19",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "@stryker-mutator/core": "^3.3.1",
     "@stryker-mutator/javascript-mutator": "^3.3.1",
     "@stryker-mutator/jest-runner": "^3.3.1",
-    "dotenv": "^8.2.0",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",

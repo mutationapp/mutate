@@ -1,4 +1,6 @@
 const mutate = ({
+  STRATEGY,
+  getInitialFiles,
   JSON,
   Buffer,
   only,
@@ -14,7 +16,10 @@ const mutate = ({
   MUTATE_PULL_OWNER,
   MUTATE_FILE_PATH,
   INIT_CWD,
+  ...rest
 }) => {
+  const MUTATE_BRANCH = rest.MUTATE_BRANCH || 'master'
+
   const nil = only(
     {
       MUTATE_API_URL,
@@ -23,6 +28,7 @@ const mutate = ({
       MUTATE_PULL_OWNER,
       MUTATE_FILE_PATH,
       INIT_CWD,
+      MUTATE_BRANCH,
     },
     x => x == null,
   )
@@ -41,10 +47,29 @@ const mutate = ({
     return process.exit(1)
   }
 
+  const deletedFiles = getInitialFiles({
+    branch: MUTATE_BRANCH,
+    strategy: STRATEGY.deleted,
+  })
+  console.log(
+    `deletedFiles`,
+    'meta',
+    JSON.stringify({
+      directory: escape,
+      deletedFiles,
+    }),
+  )
+
   formData.append('repositoryToken', MUTATE_REPOSITORY_TOKEN)
   formData.append('pullNumber', MUTATE_PULL_NUMBER)
   formData.append('pullOwner', MUTATE_PULL_OWNER)
-  formData.append('escape', escape)
+  formData.append(
+    'meta',
+    JSON.stringify({
+      directory: escape,
+      deletedFiles,
+    }),
+  )
   formData.append('file', Buffer.from(JSON.stringify(file)))
 
   const result = await fetcher(MUTATE_API_URL, {

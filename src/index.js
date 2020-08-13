@@ -56,6 +56,7 @@ const merge = shared(injectMerge)({
 const mutate = shared(injectMutate)({
   fetcher,
   merge,
+  getInitialFiles,
 })
 
 module.exports = {

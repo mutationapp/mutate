@@ -1,5 +1,5 @@
 const injectMutate = require('./mutate')
-const { shared, defaultsDeep, only } = require('../shared')
+const { shared, defaultsDeep, only, STRATEGY } = require('../shared')
 
 const mutate = async overrides => {
   const { inject, payload } = defaultsDeep(overrides, {
@@ -10,6 +10,7 @@ const mutate = async overrides => {
       MUTATE_PULL_OWNER: 'MUTATE_PULL_OWNER',
       MUTATE_FILE_PATH: 'MUTATE_FILE_PATH',
       INIT_CWD: 'INIT_CWD',
+      MUTATE_BRANCH: 'master',
     },
     inject: {
       process: {
@@ -19,7 +20,7 @@ const mutate = async overrides => {
         from: jest.fn(value => `Buffer.from(${value})`),
       },
       JSON: {
-        stringify: jest.fn(value => `JSON.stringify(${value})`),
+        stringify: jest.fn(value => JSON.stringify(value)),
       },
       fetcher: jest.fn(async () => ({})),
       formData: {
@@ -30,6 +31,7 @@ const mutate = async overrides => {
         info: jest.fn(),
         error: jest.fn(),
       },
+      getInitialFiles: jest.fn(),
       merge: jest.fn(),
     },
   })
@@ -51,6 +53,7 @@ test.each([
   {
     payload: {
       INIT_CWD: '(▀̿Ĺ̯▀̿ ̿)',
+      MUTATE_BRANCH: null,
     },
   },
   {
@@ -70,11 +73,13 @@ test.each([
 
   const exists = (overrides.payload || {}).MUTATE_FILE_PATH !== 'NOT_EXIST'
 
+  const merged = { files: {} }
+
   const { payload, inject } = await mutate({
     payload: overrides.payload,
     inject: {
       fetcher: jest.fn(async () => data),
-      merge: jest.fn(() => (exists ? 'file' : undefined)),
+      merge: jest.fn(() => (exists ? merged : undefined)),
     },
   })
 
@@ -84,25 +89,38 @@ test.each([
     logger,
     fetcher,
     process: { exit },
+    getInitialFiles,
   } = inject
 
+  const {
+    MUTATE_FILE_PATH,
+    INIT_CWD,
+    MUTATE_REPOSITORY_TOKEN,
+    MUTATE_PULL_NUMBER,
+    MUTATE_PULL_OWNER,
+    MUTATE_API_URL,
+    MUTATE_BRANCH,
+  } = payload
+
   {
-    const nil = only(payload, x => x == null)
+    const nil = only(
+      {
+        MUTATE_API_URL,
+        MUTATE_REPOSITORY_TOKEN,
+        MUTATE_PULL_NUMBER,
+        MUTATE_PULL_OWNER,
+        MUTATE_FILE_PATH,
+        INIT_CWD,
+      },
+      x => x == undefined,
+    )
     if (nil) {
       expect(logger.error).toHaveBeenCalledWith('REQUIRED:', nil)
       return expect(exit).toHaveBeenCalledWith(1)
     }
   }
 
-  const {
-    MUTATE_FILE_PATH,
-    INIT_CWD: escape,
-    MUTATE_REPOSITORY_TOKEN,
-    MUTATE_PULL_NUMBER,
-    MUTATE_PULL_OWNER,
-    MUTATE_API_URL,
-  } = payload
-
+  // return console.log(`MUTATE_BRANCH`, MUTATE_BRANCH)
   {
     if (!exists) {
       expect(logger.info).toHaveBeenCalledWith(
@@ -115,14 +133,25 @@ test.each([
     }
   }
 
+  expect(getInitialFiles).toHaveBeenCalledWith({
+    branch: MUTATE_BRANCH || 'master',
+    strategy: STRATEGY.deleted,
+  })
+
   {
+    const escape = INIT_CWD
     expect(merge).toHaveBeenCalledWith({ MUTATE_FILE_PATH, escape })
     ;[
       ['repositoryToken', MUTATE_REPOSITORY_TOKEN],
       ['pullNumber', MUTATE_PULL_NUMBER],
       ['pullOwner', MUTATE_PULL_OWNER],
-      ['escape', escape],
-      ['file', `Buffer.from(JSON.stringify(file))`],
+      [
+        'meta',
+        JSON.stringify({
+          directory: escape,
+        }),
+      ],
+      ['file', `Buffer.from(${JSON.stringify(merged)})`],
     ].forEach(([key, value]) => {
       expect(formData.append).toHaveBeenCalledWith(key, value)
     })

@@ -5,7 +5,6 @@ const getInitialFiles = ({ STRATEGY, unique, execSync }) => ({
   const command = (() => {
     if (strategy === STRATEGY.all) {
       return 'git ls-files --others --exclude-standard --cached'
-      // return 'git ls-files --others --exclude-standard --cached "*.ts"'
     }
 
     const target = branch || 'master'
@@ -18,8 +17,9 @@ const getInitialFiles = ({ STRATEGY, unique, execSync }) => ({
 
     execSync(`git fetch ${remote} ${target}`)
 
-    return `git diff --name-only ${remote}/${target}`
-    // return `git diff --name-only ${remote}/${target} "*.js"`
+    return `git diff ${remote}/${target}${
+      strategy === STRATEGY.deleted ? ' --diff-filter=D' : ''
+    } --name-only`
   })()
 
   console.info(`EXECUTING:\n"${command}"`)
