@@ -119,8 +119,7 @@ test.each([
       return expect(exit).toHaveBeenCalledWith(1)
     }
   }
-
-  // return console.log(`MUTATE_BRANCH`, MUTATE_BRANCH)
+  
   {
     if (!exists) {
       expect(logger.info).toHaveBeenCalledWith(
