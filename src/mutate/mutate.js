@@ -51,14 +51,6 @@ const mutate = ({
     branch: MUTATE_BRANCH,
     strategy: STRATEGY.deleted,
   })
-  console.log(
-    `deletedFiles`,
-    'meta',
-    JSON.stringify({
-      directory: escape,
-      deletedFiles,
-    }),
-  )
 
   formData.append('repositoryToken', MUTATE_REPOSITORY_TOKEN)
   formData.append('pullNumber', MUTATE_PULL_NUMBER)
