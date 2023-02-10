@@ -4,6 +4,3 @@ Mutation.app is an internal developer tool, build to help his sister [Monolisa](
 
 
 It will show how good you are on software developemnt. <br /> Non-profit, Use it, it is free.<br /><br />
-
-Bee: https://twitter.com/diplomatictech <br />
-Honey: "bc1qysq3zmhcrt0gkf9xkq4chrjs2cgr3negp5plj5" 
